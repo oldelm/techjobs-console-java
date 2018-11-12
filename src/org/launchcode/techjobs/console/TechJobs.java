@@ -3,6 +3,7 @@ package org.launchcode.techjobs.console;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.*;
 
 /**
  * Created by LaunchCode
@@ -61,7 +62,11 @@ public class TechJobs {
                 String searchTerm = in.nextLine();
 
                 if (searchField.equals("all")) {
-                    System.out.println("Search all fields not yet implemented.");
+                    //call printJobs, and call findByValue inside that call
+                    printJobs(JobData.findByValue(searchTerm));
+
+                    //old error:
+                    //System.out.println("Search all fields not yet implemented.");
                 } else {
                     printJobs(JobData.findByColumnAndValue(searchField, searchTerm));
                 }
@@ -110,7 +115,56 @@ public class TechJobs {
 
     // Print a list of jobs
     private static void printJobs(ArrayList<HashMap<String, String>> someJobs) {
+        // if someJobs isn't empty
+        if (!someJobs.isEmpty()) {
 
-        System.out.println("printJobs is not implemented yet");
+            System.out.println("The following jobs were found:");
+
+            // iterate over someJobs
+            //for (HashMap<String, String> aJob : someJobs) {
+
+                // added ***** for legibility of the printout:
+
+                for (HashMap<String, String> aJob : someJobs) {
+                    System.out.println("*****" + "\n" + "\n" + "*****");
+
+                    // call printJob
+                    printJob(aJob);
+
+
+                // old error message:
+                //System.out.println("printJobs is not implemented yet");
+            }
+
+            //print out error if no jobs are found:
+        } else {
+                System.out.println("No matching jobs were found");
+            }
+        }
+
+
+    private static void printJob(HashMap<String, String> aJob) {
+        Set<String> keyset = aJob.keySet(); // keySet() returns a set
+
+        // can't sort a set, so convert to ArrayList:
+        // declare ArrayList keylist, plug in keyset from above
+        ArrayList<String> keylist = new ArrayList<>(keyset);
+
+        // sort keylist:
+        //Collections.sort(keylist);
+
+        // print the job
+        for (String k : keylist){
+            String val = aJob.get(k);
+            System.out.println(k + ":  " + val );
+        }
+
     }
+
+
+
+
 }
+
+
+

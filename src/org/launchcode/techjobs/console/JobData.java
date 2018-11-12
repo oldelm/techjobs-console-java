@@ -7,9 +7,7 @@ import org.apache.commons.csv.CSVRecord;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by LaunchCode
@@ -43,6 +41,9 @@ public class JobData {
             }
         }
 
+        // sort values so returns in alphabetical order
+        Collections.sort(values);
+
         return values;
     }
 
@@ -72,17 +73,78 @@ public class JobData {
 
         ArrayList<HashMap<String, String>> jobs = new ArrayList<>();
 
+        // for each row in allJobs
         for (HashMap<String, String> row : allJobs) {
 
+            // hasAny is case insensitive. but checks all fields, not just one,
+            // so shouldn't use. instead just:
+
+            // add toLowerCase() so search is case insensitive:
             String aValue = row.get(column);
 
-            if (aValue.contains(value)) {
+            if (aValue.toLowerCase().contains(value.toLowerCase())) {
+                jobs.add(row);
+            }
+
+
+            // old code, not case insensitive:
+
+            //String aValue = row.get(column);
+
+            //if (aValue.contains(value)) {
+            //    jobs.add(row);
+            //}
+        }
+
+        return jobs;
+    }
+
+    public static ArrayList<HashMap<String, String>> findByValue(String value) {
+
+        // load data, if not already loaded
+        loadData();
+
+        // make arraylist jobs, in which each hashmap is a single job:
+        ArrayList<HashMap<String, String>> jobs = new ArrayList<>();
+
+        for (HashMap<String, String> row : allJobs) {
+
+            // use hasAny to check whether job (row) has the String value
+            // anywhere in it. if so, then add it to the arraylist of jobs:
+
+            if (hasAny(row, value)) {
+
                 jobs.add(row);
             }
         }
 
         return jobs;
     }
+
+    // make helper function hasAny to check if job contains search value:
+    public static Boolean hasAny(HashMap<String, String> aJob, String searchValue) {
+
+        Set<String> fields = aJob.keySet();
+        // ^keySet() is a method of HashMap that returns a set (called fields)
+        // of all the keys in the HashMap aJob
+
+        for (String f : fields) {
+            //get value of f:
+            String fValue = aJob.get(f);
+
+            // compare lowercase value of f to lowercase searchvalue
+            // (so that search is case insensitive)
+            if (fValue.toLowerCase().contains(searchValue.toLowerCase())) {
+                return true;
+            }
+
+        }
+
+        // if loops through all the fields and doesn't return true:
+        return false;
+
+    }
+
 
     /**
      * Read in data from a CSV file and store it in a list
